@@ -13,10 +13,48 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Solver">
+      <UniqueIdentifier>{f9a3ad22-6019-4f24-a798-5e452891ca3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Solver">
+      <UniqueIdentifier>{d45d187b-db74-42d5-bd2f-1bbab35ab4fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\QueensProblem">
+      <UniqueIdentifier>{5b2a1756-450f-45dd-ac0b-a0f8172394f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\QueensProblem">
+      <UniqueIdentifier>{2e705a18-63dc-4574-9da2-6982645b0cea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GenomeXYAB.cpp">
+      <Filter>Source Files\Solver</Filter>
+    </ClCompile>
+    <ClCompile Include="Solver.cpp">
+      <Filter>Source Files\Solver</Filter>
+    </ClCompile>
+    <ClCompile Include="GenomeQueens.cpp">
+      <Filter>Source Files\QueensProblem</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GenomeXYAB.h">
+      <Filter>Header Files\Solver</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticXorShift.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Solver.h">
+      <Filter>Header Files\Solver</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseGenome.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GenomeQueens.h">
+      <Filter>Header Files\QueensProblem</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
