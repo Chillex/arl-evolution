@@ -7,7 +7,7 @@ class GenomeQueens : BaseGenome
 {
 public:
 
-	GenomeQueens(unsigned int columnCount);
+	GenomeQueens(int columnCount);
 	~GenomeQueens();
 
 	BaseGenome* MutateRandom(int mutationStrength) override;
@@ -21,9 +21,9 @@ public:
 
 	void Print(void) override;
 
-	unsigned int* values;
+	std::vector<int> values;
 private:
-	unsigned int m_columns;
+	int m_columns;
 };
 
 #endif

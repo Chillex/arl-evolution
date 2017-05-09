@@ -100,6 +100,11 @@ BaseGenome* GenomeXYAB::GetCombinedGenome(const std::vector<BaseGenome*>& parent
 	return newGenome;
 }
 
+std::vector<BaseGenome*> GenomeXYAB::GetOnePointCrossoverGenome(const std::vector<BaseGenome*>& parents, float mutationChance)
+{
+	return std::vector<BaseGenome*>();
+}
+
 void GenomeXYAB::Print()
 {
 	printf("<%d, %d, %d, %d>", values.x, values.y, values.a, values.b);

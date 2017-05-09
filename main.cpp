@@ -1,4 +1,5 @@
 #include "Solver.h"
+#include "GenomeQueens.h"
 
 struct SolverType
 {
@@ -49,6 +50,13 @@ int main()
 
 	unsigned int maxGenerations = 10000u;
 	
+	// BEGIN Test Code
+	GenomeQueens base(4);
+	BaseGenome* genome = base.GetRandomGenome();
+	genome->Print();
+	printf(" - Fitness: %d\n", genome->GetFitness());
+	// END Test Code
+
 	RunSolver(SolverType::OnePlusOne, 1u, 1u, 1u, maxGenerations, Print::Nothing);
 	RunSolver(SolverType::MyPlusLambda, my, lambda, rho, maxGenerations, Print::Nothing);
 	RunSolver(SolverType::MyCommaLambda, my, lambda, rho, maxGenerations, Print::Nothing);

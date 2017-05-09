@@ -1,16 +1,34 @@
 #include "GenomeQueens.h"
 #include "StaticXorShift.h"
 #include <cassert>
+#include <algorithm>
 
-GenomeQueens::GenomeQueens(unsigned int columnCount)
+#include <iostream>
+#include <iterator>
+
+GenomeQueens::GenomeQueens(int columnCount)
 	: m_columns(columnCount)
 {
-	values = new unsigned int[m_columns];
+	values.resize(m_columns);
 }
 
 GenomeQueens::~GenomeQueens()
 {
-	delete[] values;
+}
+
+BaseGenome* GenomeQueens::MutateRandom(int mutationStrength)
+{
+	return nullptr;
+}
+
+BaseGenome* GenomeQueens::GetBlendedGenome(const std::vector<BaseGenome*>& parents, int mutationStrength)
+{
+	return nullptr;
+}
+
+BaseGenome* GenomeQueens::GetCombinedGenome(const std::vector<BaseGenome*>& parents, int mutationStrength)
+{
+	return nullptr;
 }
 
 BaseGenome* GenomeQueens::GetRandomGenome()
@@ -27,7 +45,23 @@ BaseGenome* GenomeQueens::GetRandomGenome()
 
 int GenomeQueens::GetFitness()
 {
+	int clashes = 0;
 
+	for (int column = 0; column < m_columns; ++column)
+	{
+		for (int queenNum = column + 1; queenNum < m_columns; ++queenNum)
+		{
+			// check if queen is in same row
+			if (values[column] == values[queenNum])
+				++clashes;
+
+			// check if queen is in same diagonal
+			if (abs(column - queenNum) == abs(values[column] - values[queenNum]))
+				++clashes;
+		}
+	}
+
+	return clashes;
 }
 
 int GenomeQueens::GetOptimalFitness()
