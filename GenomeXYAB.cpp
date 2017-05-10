@@ -47,24 +47,18 @@ BaseGenome* GenomeXYAB::GetRandomGenome()
 
 int GenomeXYAB::GetFitness()
 {
-	int fitness = (this->values.a > this->values.b) ? GetOptimalFitness() : -GetOptimalFitness();
-
-	// if a < b, use the difference in the fitness value, so smaller gaps are better
-	if (fitness < 0)
-	{
-		fitness += this->values.a - this->values.b;
-	}
+	// A hast to be greater than B
+	if (this->values.a < this->values.b)
+		return INT_MAX - 1;
 
 	int leftSide = 3 * pow(this->values.x, 2) + 5 * pow(this->values.y, 3);
 	int rightSide = 7 * this->values.a + 3 * pow(this->values.b, 2);
-	fitness -= abs(leftSide - rightSide);
-
-	return fitness;
+	return abs(leftSide - rightSide);
 }
 
 int GenomeXYAB::GetOptimalFitness()
 {
-	return 100000;
+	return 0;
 }
 
 BaseGenome* GenomeXYAB::GetBlendedGenome(const std::vector<BaseGenome*>& parents, int mutationStrength)

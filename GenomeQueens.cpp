@@ -73,7 +73,7 @@ std::vector<BaseGenome*> GenomeQueens::GetOnePointCrossoverGenome(const std::vec
 {
 	assert(parents.size() == 2);
 
-	int splittingPoint = StaticXorShift::GetIntInRange(0, m_columns - 1);
+	int splittingPoint = StaticXorShift::GetIntInRange(1, m_columns - 2);
 
 	GenomeQueens* firstParent = dynamic_cast<GenomeQueens*>(parents[0]);
 	GenomeQueens* secondParent = dynamic_cast<GenomeQueens*>(parents[1]);
@@ -95,6 +95,42 @@ std::vector<BaseGenome*> GenomeQueens::GetOnePointCrossoverGenome(const std::vec
 		}
 	}
 
+	// mutation
+	for (int i = 0; i < 2; ++i)
+	{
+		if (StaticXorShift::GetPercentage() < mutationChance)
+		{
+			for(size_t valueIndex = 0; valueIndex < m_columns; ++valueIndex)
+			{
+				int modifier = StaticXorShift::GetIntInRange(-(m_columns - 1), m_columns - 1);
+
+				if(StaticXorShift::GetPercentage() < 1.0f / static_cast<float>(m_columns))
+				{
+					if (i == 0)
+					{
+						firstChild->values[valueIndex] += modifier;
+
+						if (firstChild->values[valueIndex] >= m_columns)
+							firstChild->values[valueIndex] -= m_columns;
+
+						if (firstChild->values[valueIndex] < 0)
+							firstChild->values[valueIndex] = -firstChild->values[valueIndex];
+					}
+					else
+					{
+						secondChild->values[valueIndex] += modifier;
+
+						if (secondChild->values[valueIndex] >= m_columns)
+							secondChild->values[valueIndex] -= m_columns;
+
+						if (secondChild->values[valueIndex] < 0)
+							secondChild->values[valueIndex] = -secondChild->values[valueIndex];
+					}
+				}
+			}
+		}
+	}
+	
 	return std::vector<BaseGenome*> { firstChild, secondChild };
 }
 

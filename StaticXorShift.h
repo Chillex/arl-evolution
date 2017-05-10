@@ -28,6 +28,11 @@ namespace StaticXorShift {
 		return min + (GetNumber() % static_cast<int>(max - min + 1));
 	}
 
+	static float GetPercentage()
+	{
+		return static_cast<float>(GetIntInRange(0, 1000)) / 1000.0f;
+	}
+
 };
 
 #endif

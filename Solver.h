@@ -56,12 +56,17 @@ public:
 	void EvolveMyCommaLambda(InheritanceMode::Enum inheritanceMode);
 	void EvolveMyLambda(MyLambdaSelection::Enum selectionMode);
 	void EvolveMyRhoLambda(InheritanceMode::Enum inheritanceMode, MyLambdaSelection::Enum selectionMode);
+	void EvolveGenetic(void);
 
 	bool HasSolved(void) const;
 	void ResetPopulation(size_t size);
 
 	void PrintFitness(void) const;
 	void PrintSolution(void) const;
+	int GetFitness(void) const;
+
+	template <typename T>
+	T* GetSolution(void);
 
 private:
 	std::vector<GenomeFitness> m_population;
@@ -80,4 +85,9 @@ private:
 	bool CheckForSolution(void);
 };
 
+template <typename T>
+T* Solver::GetSolution()
+{
+	return dynamic_cast<T*>(m_solution);
+}
 #endif

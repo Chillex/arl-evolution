@@ -3,7 +3,7 @@
 
 #include "BaseGenome.h"
 
-class GenomeQueens : BaseGenome
+class GenomeQueens : public BaseGenome
 {
 public:
 

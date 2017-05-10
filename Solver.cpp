@@ -30,7 +30,7 @@ void Solver::EvolveOnePlusOne()
 	
 	// only use the fitter genome
 	int mutatedFitness = mutatedGenome->GetFitness();
-	if(mutatedFitness > m_population[0].fitness)
+	if(mutatedFitness <= m_population[0].fitness)
 	{
 		m_population[0].genome = mutatedGenome;
 		m_population[0].fitness = mutatedFitness;
@@ -53,7 +53,7 @@ void Solver::EvolveMyPlusLambda(InheritanceMode::Enum inheritanceMode)
 	}
 
 	// sort, so the fittest genomes are in the front
-	sort(m_population.begin(), m_population.end(), std::greater<GenomeFitness>());
+	sort(m_population.begin(), m_population.end());
 
 	// only the fittest my genomes live (parents + children)
 	m_population.resize(m_my);
@@ -78,7 +78,7 @@ void Solver::EvolveMyCommaLambda(InheritanceMode::Enum inheritanceMode)
 	}
 
 	// sort the children, so the fittest genomes are in the front
-	sort(children.begin(), children.end(), std::greater<GenomeFitness>());
+	sort(children.begin(), children.end());
 
 	// only the fittest genomes live (only children)
 	children.resize(m_my);
@@ -117,6 +117,50 @@ void Solver::EvolveMyRhoLambda(InheritanceMode::Enum inheritanceMode, MyLambdaSe
 	}
 }
 
+void Solver::EvolveGenetic(void)
+{
+	// check if we found a solution
+	if (CheckForSolution())
+		return;
+
+	// select lambda random parents
+	for (unsigned int i = 0; i < m_lambda; ++i)
+	{
+		// get rho parents, the fitter the candiate, the higher the chance of being a parent
+		std::vector<BaseGenome*> parents;
+		size_t cnt = 0;
+		while(parents.size() < m_rho)
+		{
+			if (StaticXorShift::GetPercentage() < 1.0f / static_cast<float>(m_population[cnt % m_population.size()].fitness + 4))
+			{
+				parents.push_back(m_population[cnt % m_population.size()].genome);
+			}
+
+			++cnt;
+		}
+		
+		// get new genomes with one point crossover
+		std::vector<BaseGenome*> newGenomes = m_baseGenome->GetOnePointCrossoverGenome(parents, 0.6f);
+		for (size_t cnt = 0; cnt < newGenomes.size(); ++cnt)
+		{
+			m_population.push_back({ newGenomes[cnt], newGenomes[cnt]->GetFitness() });
+		}
+	}
+
+	// sort, so the fittest genomes are in the front
+	sort(m_population.begin(), m_population.end());
+
+
+	// delete all genomes that will not survive
+	for (size_t i = m_my; i < m_population.size(); ++i)
+	{
+		delete m_population[i].genome;
+	}
+
+	// only the fittest my genomes live (parents + children)
+	m_population.resize(m_my);
+}
+
 bool Solver::HasSolved() const
 {
 	return m_hasSolved;
@@ -124,8 +168,12 @@ bool Solver::HasSolved() const
 
 void Solver::ResetPopulation(size_t size)
 {
-	m_population.resize(size);
+	for (unsigned int i = 0; i < m_population.size(); ++i)
+	{
+		delete m_population[i].genome;
+	}
 
+	m_population.resize(size);
 	
 	for (unsigned int i = 0; i < size; ++i)
 	{
@@ -133,16 +181,24 @@ void Solver::ResetPopulation(size_t size)
 		m_population[i] = {randomGenome, randomGenome->GetFitness()};
 	}
 
-	sort(m_population.begin(), m_population.end(), std::greater<GenomeFitness>());
+	sort(m_population.begin(), m_population.end());
+
+	// also reset solution
+	m_hasSolved = false;
+	m_solution = nullptr;
 }
 
 void Solver::PrintFitness() const
 {
+	int totalFitness = 0;
+	
 	for (size_t i = 0; i < m_population.size(); ++i)
 	{
-		printf("%d, ", m_population[i].fitness);
+		totalFitness += m_population[i].fitness;
 	}
-	printf("\n");
+
+	totalFitness /= static_cast<int>(m_population.size());
+	printf("%d\n", totalFitness);
 }
 
 void Solver::PrintSolution() const
@@ -159,29 +215,37 @@ void Solver::PrintSolution() const
 	}
 }
 
+int Solver::GetFitness() const
+{
+	int totalFitness = 0;
+
+	for (size_t i = 0; i < m_population.size(); ++i)
+	{
+		totalFitness += m_population[i].fitness;
+	}
+
+	totalFitness /= static_cast<int>(m_population.size());
+
+	return totalFitness;
+}
+
 BaseGenome* Solver::GetNewGenome(InheritanceMode::Enum inheritanceMode, size_t lastParentIndex)
 {
 	BaseGenome* newGenome;
 
 	std::vector<BaseGenome*> parents;
 	parents.reserve(m_rho);
+	for (size_t cnt = 0; cnt < m_rho; ++cnt)
+	{
+		parents.emplace_back(m_population[StaticXorShift::GetIntInRange(0, lastParentIndex)].genome);
+	}
 
 	switch (inheritanceMode)
 	{
 	case InheritanceMode::Blend:
-		for (size_t cnt = 0; cnt < m_rho; ++cnt)
-		{
-			parents.emplace_back(m_population[StaticXorShift::GetIntInRange(0, lastParentIndex)].genome);
-		}
-
 		newGenome = m_baseGenome->GetBlendedGenome(parents, m_mutationStrength);
 		break;
 	case InheritanceMode::Combination:
-		for (size_t cnt = 0; cnt < m_rho; ++cnt)
-		{
-			parents.emplace_back(m_population[StaticXorShift::GetIntInRange(0, lastParentIndex)].genome);
-		}
-
 		newGenome = m_baseGenome->GetCombinedGenome(parents, m_mutationStrength);
 		break;
 	case InheritanceMode::OnlyMutation:
